@@ -6,6 +6,7 @@ import (
 	"api/src/repositorios"
 	"api/src/respostas"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -89,6 +90,10 @@ func BuscarUsuario(w http.ResponseWriter, r *http.Request) {
 
 	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
 	usuario, erro := repositorio.BuscarPorID(usuarioID)
+	if usuario.ID == 0 {
+		respostas.Erro(w, http.StatusNotFound, errors.New("Usuário não encontrado!"))
+		return
+	}
 	if erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
 		return
